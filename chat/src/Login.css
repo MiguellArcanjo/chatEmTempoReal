@@ -1,0 +1,128 @@
+.containerLogin {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+}
+
+.dir {
+  background-color: #fff;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  right: 0;
+  z-index: -1;
+}
+
+.dir h1 {
+  font-size: 8rem;
+}
+
+.dir p {
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.esq {
+  background-color: #7F3FBF;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: .5s;
+}
+
+.esqMovimentado {
+  /* position: absolute; */
+  /* left: 50%; */
+  transform: translateX(100%);
+  background-color: #7F3FBF;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9;
+  transition: .5s;
+}
+
+.esqMovimentado a {
+  margin-top: 40px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.esq h2, .esqMovimentado h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 70px;
+  font-weight: normal;
+  margin-bottom: 60px;
+}
+
+.esq h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 70px;
+  font-weight: normal;
+  margin-bottom: 60px;
+}
+
+.formLogin {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.formLogin div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 30px;
+}
+
+.formLogin div label {
+  color: #fff;
+}
+
+.formLogin div input {
+  padding: 10px;
+  width: 400px;
+  border-radius: 10px;
+  outline: none;
+  border: none;
+}
+
+.formLogin div input::placeholder {
+  color: #000;
+}
+
+.esq button, .esqMovimentado button {
+  margin-top: 50px;
+  padding: 15px;
+  width: 180px;
+  border-radius: 10px;
+  border: none;
+  font-weight: normal;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.esq a {
+  margin-top: 40px;
+  color: #fff;
+  text-decoration: none;
+}

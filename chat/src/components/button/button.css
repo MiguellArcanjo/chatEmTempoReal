@@ -1,0 +1,47 @@
+.btn {
+    position: relative;
+    padding: 5px 20px;
+    font-size: 16px;
+    color: #000;
+    border: 2px solid #fff;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 1;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: #000;
+    transform: translate(-50%, -50%);
+    top: var(--y);
+    left: var(--x);
+    pointer-events: none;
+    transition: width 0.8s ease, height 0.8s ease; 
+    z-index: 0;
+    color: #fff;
+}
+
+.btn:hover::before {
+    width: 400px;
+    height: 400px;
+}
+
+.btn span {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: transparent;
+    transition: background-color 0.4s ease; 
+}
+
+.btn:hover span {
+    background-color: #000;
+    color: #fff;
+}
