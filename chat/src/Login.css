@@ -16,10 +16,91 @@
   position: absolute;
   right: 0;
   z-index: -1;
+  transition: .5s;
 }
 
-.dir h1 {
+.dirMovimentado {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(-100%);
+  transition: .5s;
+  background-color: #fff;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: -1;
+}
+
+.dirMovimentado h1 {
   font-size: 8rem;
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animarEsquerda h1 span {
+  display: inline-block;
+  opacity: 0;
+  animation: slideLeft 0.5s ease-in-out forwards;
+}
+
+.animarDireita h1 span {
+  display: inline-block;
+  opacity: 0;
+  animation: slideRight 0.5s ease-in-out forwards;
+}
+
+.animarEsquerda .c, .animarDireita .c { animation-delay: 0.1s; }
+.animarEsquerda .h, .animarDireita .h { animation-delay: 0.2s; }
+.animarEsquerda .a, .animarDireita .a { animation-delay: 0.3s; }
+.animarEsquerda .t, .animarDireita .t { animation-delay: 0.4s; }
+.animarEsquerda .ponto, .animarDireita .ponto { animation-delay: 0.5s; }
+.animarEsquerda .i, .animarDireita .i { animation-delay: 0.6s; }
+.animarEsquerda .o, .animarDireita .o { animation-delay: 0.7s; }
+
+.animarEsquerda .paragrafoAnimado {
+  opacity: 0;
+  animation: slideLeft 0.7s ease-in-out forwards;
+  animation-delay: 1s;
+}
+
+.animarDireita .paragrafoAnimado {
+  opacity: 0;
+  animation: slideRight 0.7s ease-in-out forwards;
+  animation-delay: 1s;
+}
+
+.dir h1, .dirMovimentado h1 {
+  font-size: 8rem;
+  text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.dirMovimentado p {
+  font-weight: 500;
+  font-size: 20px;
 }
 
 .dir p {
@@ -38,8 +119,6 @@
 }
 
 .esqMovimentado {
-  /* position: absolute; */
-  /* left: 50%; */
   transform: translateX(100%);
   background-color: #7F3FBF;
   width: 50%;
@@ -63,7 +142,7 @@
   align-items: center;
   color: #fff;
   font-size: 70px;
-  font-weight: normal;
+  font-weight: bold;
   margin-bottom: 60px;
 }
 
@@ -75,6 +154,7 @@
   font-size: 70px;
   font-weight: normal;
   margin-bottom: 60px;
+  font-weight: bold;
 }
 
 .formLogin {
@@ -85,6 +165,11 @@
   justify-content: center;
   align-items: center;
   margin: 0 auto;
+}
+
+.error {
+  color: #fff;
+  margin-top: 30px;
 }
 
 .formLogin div {
@@ -99,11 +184,12 @@
 }
 
 .formLogin div input {
-  padding: 10px;
+  padding: 14px;
   width: 400px;
   border-radius: 10px;
   outline: none;
   border: none;
+  box-shadow: 8px 8px 18 px rgba(0, 0, 0, 0.25);
 }
 
 .formLogin div input::placeholder {

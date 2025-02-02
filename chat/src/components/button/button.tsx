@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import "./button.css";
 
-const DynamicButton: React.FC = () => {
+interface DynamicButtonProps {
+  onClick: (e: React.FormEvent) => void;  
+}
+
+const DynamicButton: React.FC<DynamicButtonProps> = ({ onClick }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -15,6 +19,7 @@ const DynamicButton: React.FC = () => {
     <button
       className="btn"
       onMouseMove={handleMouseMove}
+      onClick={onClick} 
       style={{ "--x": `${mousePosition.x}px`, "--y": `${mousePosition.y}px` } as React.CSSProperties}
     >
       <span>Enviar</span>
