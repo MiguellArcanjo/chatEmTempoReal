@@ -1,12 +1,17 @@
 import "./card.css";
 
-const Card = () => {
+interface CardProps {
+  name: string;
+  onClick: () => void;
+}
+
+const Card: React.FC<CardProps> = ({ name, onClick }) => {
   return (
-    <div className="containerCard">
-        <div>
-            <img src="/iconPersonPreto.svg" alt="" />
-            <p>João</p>
-        </div>
+    <div className="containerCard" onClick={onClick}>
+      <div>
+        <img src="/iconPersonPreto.svg" alt="Ícone do usuário" />
+        <p>{name}</p>
+      </div>
     </div>
   );
 };

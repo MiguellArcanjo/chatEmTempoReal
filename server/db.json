@@ -4,31 +4,72 @@
       "id": 1,
       "name": "miguel",
       "email": "miguel@email.com",
-      "password": "123"
+      "password": "123",
+      "contacts": [
+        2
+      ]
     },
     {
       "id": 2,
-      "name": "luiz",
-      "email": "luiz@email.com",
-      "password": "123"
+      "name": "ray",
+      "email": "rayssa@email.com",
+      "password": "123",
+      "contacts": [
+        1,
+        3
+      ]
     },
     {
       "id": 3,
-      "name": "Pazaro",
-      "email": "pazaro@email.com",
-      "password": "123"
+      "name": "marcos",
+      "email": "marcos@email.com",
+      "password": "123",
+      "contacts": [
+        2,
+        4
+      ]
     },
     {
       "id": 4,
-      "name": "Rayssa",
-      "email": "rayssa@email.com",
-      "password": "123"
+      "name": "Tester4",
+      "email": "tester4@email.com",
+      "password": "123",
+      "contacts": [
+        3
+      ]
     },
     {
       "id": 5,
-      "name": "Tester",
-      "email": "tester@email.com",
-      "password": "123"
+      "name": "tes",
+      "email": "tes@email.com",
+      "password": "123",
+      "contacts": []
+    }
+  ],
+  "requests": [
+    {
+      "id": 1,
+      "id_usuario_requisitante": 1,
+      "id_usuario_receptor": 2,
+      "status": "aceito"
+    },
+    {
+      "id": 2,
+      "id_usuario_requisitante": 2,
+      "id_usuario_receptor": 3,
+      "status": "aceito"
+    },
+    {
+      "id": 3,
+      "id_usuario_requisitante": 4,
+      "id_usuario_receptor": 3,
+      "status": "aceito"
+    },
+    {
+      "id": 4,
+      "id_usuario_requisitante": 5,
+      "id_usuario_receptor": 4,
+      "status": "pendente"
     }
   ]
 }
