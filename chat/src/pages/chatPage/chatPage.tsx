@@ -15,8 +15,27 @@ const ChatPage = () => {
   const [contacts, setContacts] = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
   const [showRequest, setShowRequests] = useState(false);
+  const [showPerfil, setShowPerfil] = useState(false)
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pendingRequestsCount, setPendingRequestsCount] = useState<number>(0);
+  const [userName, setUserName] = useState<string>("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch("http://localhost:8080/users/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUserName(data.name); 
+        })
+        .catch((error) => console.error("Erro ao buscar usuário:", error));
+    }
+  }, []);
 
   const fetchContacts = async () => {
     try {
@@ -124,8 +143,14 @@ const ChatPage = () => {
   };
 
   const handleShowwRequests = () => {
+    setShowPerfil(false);
     setShowRequests(!showRequest);
   };
+  const handleShowPerfil = () => {
+
+    setShowRequests(false);
+    setShowPerfil(!showPerfil)
+  }
 
   const handleAcceptRequest = async (requestId: string) => {
     try {
@@ -181,6 +206,20 @@ const ChatPage = () => {
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  useEffect(() => {
+    if (showRequest) {
+      document.querySelector(".requestsModal")?.classList.add("show");
+    } else {
+      document.querySelector(".requestsModal")?.classList.remove("show");
+    }
+  
+    if (showPerfil) {
+      document.querySelector(".PerfilModal")?.classList.add("show");
+    } else {
+      document.querySelector(".PerfilModal")?.classList.remove("show");
+    }
+  }, [showRequest, showPerfil]);
+
   return (
     <section className="containerChat">
       <nav className="nav">
@@ -226,25 +265,37 @@ const ChatPage = () => {
             height={50} 
             width={50} 
             className="person"
-            onClick={handleLogout}
+            onClick={handleShowPerfil}
           />
         </div>
       </nav>
 
       {showRequest && (
-        <div className="requestsModal">
+        <div className={`requestsModal`}>
           <h2>Solicitações de amizade</h2>
           {requests.length > 0 ? (
             requests.map((request) => (
               <div key={request.id}>
                 <p>{request.senderName}</p>
-                <button onClick={() => handleAcceptRequest(request.id)}>Aceitar</button>
-                <button onClick={() => handleRejectRequest(request.id)}>Rejeitar</button>
+                <button onClick={() => handleAcceptRequest(request.id)} className="btnSolicitacao">Aceitar</button>
+                <button onClick={() => handleRejectRequest(request.id)} className="btnSolicitacao">Rejeitar</button>
               </div>
             ))
           ) : (
-            <p>Não há solicitações pendentes</p>
+            <p className="paragrafoModal">Não há solicitações pendentes</p>
           )}
+        </div>
+      )}
+
+      {showPerfil && (
+        <div className="PerfilModal">
+          <p className="nameUSer">{userName}</p>
+          <div>
+            <p className="perfil">Perfil</p>
+            <button onClick={handleLogout} className="btnLogout">
+              <img src="/exit.svg" alt="" height={40} width={40}/>
+            </button>
+          </div>
         </div>
       )}
 

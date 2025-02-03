@@ -44,6 +44,13 @@
       "email": "tes@email.com",
       "password": "123",
       "contacts": []
+    },
+    {
+      "id": 6,
+      "name": "ad",
+      "email": "admin@gmail.com",
+      "password": "123",
+      "contacts": []
     }
   ],
   "requests": [
@@ -69,6 +76,24 @@
       "id": 4,
       "id_usuario_requisitante": 5,
       "id_usuario_receptor": 4,
+      "status": "pendente"
+    },
+    {
+      "id": 5,
+      "id_usuario_requisitante": 6,
+      "id_usuario_receptor": 3,
+      "status": "pendente"
+    },
+    {
+      "id": 6,
+      "id_usuario_requisitante": 6,
+      "id_usuario_receptor": 4,
+      "status": "pendente"
+    },
+    {
+      "id": 7,
+      "id_usuario_requisitante": 6,
+      "id_usuario_receptor": 1,
       "status": "pendente"
     }
   ]

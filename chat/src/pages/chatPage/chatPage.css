@@ -109,17 +109,109 @@ main {
 
 .requestsModal {
     position: absolute;
-    background-color: transparent;
-    border: 2px solid #7F3FBF;
+    background-color: #7F3FBF;
+    color: #fff;
     height: 200px;
     width: 400px;
     left: 72%;
+    animation: slideUp 0.5s ease-out forwards; 
+    overflow-y: scroll;
+    border-radius: 0 0 10px 10px;
 }
 
 .requestsModal h2 {
-    color: #7F3FBF;
+    color: #fff;
     font-size: 18px;
     margin-top: 10px;
+    text-align: center;
+}
+
+.requestsModal div {
+    padding: 5px;
+    margin-left: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    border-top: 2px solid #fff;
+}
+
+.requestsModal div button {
+    width: 200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.PerfilModal {
+    position: absolute;
+    background-color: #7F3FBF;
+    color: #fff;
+    height: 90px;
+    width: 250px;
+    left: 85%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    animation: slideUp 0.5s ease-out forwards;
+    border-radius: 0 0 10px 10px;
+}
+
+.nameUSer {
+    border: none;
+    position: relative;
+    top: 10px;
+} 
+
+.PerfilModal div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.perfil {
+    border-right: 2px solid #fff;
+    padding: 5px 15px 5px 5px;
+    cursor: pointer;
+}
+
+.btnLogout {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    /* padding: 5px; */
+    /* height: 50px; */
+    /* width: 90px; */
+    /* border: 1px solid #7F3FBF; */
+    border: none;
+    /* background-color: #fff; */
+}
+
+.btnLogout img {
+    background-color: #7F3FBF;
+    border: none;
+    padding-left: 15px;
+}
+
+.paragrafoModal {
+    font-size: 15px;
+    margin-top: 14%;
+    margin-left: 9%;
+}
+
+.btnSolicitacao {
+    background-color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .3s;
+    color: #7F3FBF;
+    font-weight: 500;
+}
+
+.btnSolicitacao:hover {
+    transform: scale(1.1);
+    transition: .3s;
 }
 
 .requestsModal div {
@@ -195,4 +287,20 @@ main {
     display: flex;
     gap: 30px;
     align-items: center;
+}
+
+.requestsModal.show, .PerfilModal.show {
+    transform: translateY(0); 
+    opacity: 1;
+}
+
+@keyframes slideUp {
+    from {
+      transform: translateY(-10%); 
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0); 
+      opacity: 1;
+    }
 }
