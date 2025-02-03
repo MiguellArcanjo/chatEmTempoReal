@@ -8,15 +8,14 @@ io.on("connection", (socket) => {
         console.log(`Usuário ${socket.id} entrou na sala ${room}`);
     });
 
-    socket.on("mensagem", ({ room, mensagem }) => {
-        console.log(`Mensagem para a sala ${room}:`, mensagem);
-
-        io.to(room).emit("mensagem", { mensagem, id: socket.id })
-    })
+    socket.on("mensagem", ({ room, senderId, receiverId, message }) => {
+        console.log(`Mensagem de ${senderId} para ${receiverId} na sala ${room}:`, message);
+        io.to(room).emit("mensagem", { senderId, message, timestamp: new Date().toISOString() });
+    });
 
     socket.on("sair_da_sala", (room) => {
         socket.leave(room);
-        console.log(`Usuário ${socket.id} saiu da sala ${room}`)
+        console.log(`Usuário ${socket.id} saiu da sala ${room}`);
     });
 
     socket.on("disconnect", () => {
