@@ -56,7 +56,6 @@
       ]
     }
   ],
-  "messages": [],
   "requests": [
     {
       "id": 1,
@@ -99,6 +98,22 @@
       "id_usuario_requisitante": 6,
       "id_usuario_receptor": 1,
       "status": "aceito"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "senderId": 2,
+      "receiverId": 1,
+      "message": "teas",
+      "timestamp": "2025-02-06T17:11:35.860Z"
+    },
+    {
+      "id": 2,
+      "senderId": 1,
+      "receiverId": 2,
+      "message": "Mandando mensagem para Miguel",
+      "timestamp": "2025-02-06T17:12:10.581Z"
     }
   ]
 }

@@ -156,28 +156,25 @@ const ChatPage = () => {
     navigate("/");
   };
 
-  const fetchMessages = async (contactId: string) => {
+  const fetchMessages = async (contactId: any) => {
     try {
-      const token = localStorage.getItem("token");
-  
-      const response = await fetch(`http://localhost:8080/chat/${userId}/messages/${contactId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error("Erro ao buscar mensagens");
-      }
-  
-      const data = await response.json();
-      setMessages(data.messages);
-  
-      // Entrar na sala do contato
-      socket.emit("join", { userId, room: `room-${contactId}` });
+        const token = localStorage.getItem("token");
+        const response = await fetch(`http://localhost:8080/chat/messages/${userId}/${contactId}`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+            throw new Error("Erro ao buscar mensagens");
+        }
+
+        const data = await response.json();
+        setMessages(data);
+
+        // **Entrar na sala correta**
+        socket.emit("join", { userId, contactId });
     } catch (error) {
-      console.error("Erro ao buscar mensagens:", error);
+        console.error("Erro ao buscar mensagens:", error);
     }
   };
 
@@ -286,19 +283,45 @@ const ChatPage = () => {
     }
   }, [showRequest, showPerfil]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (socket && message.trim() !== "" && selectedChat) {
-      const newMessage = {
-        senderId: userId,
-        receiverId: selectedChat,
-        message: message,
-      };
+        const newMessage = {
+            senderId: userId,
+            receiverId: selectedChat,
+            message: message,
+        };
 
-      socket.emit("sendMessage", newMessage);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setMessage(""); 
+        const token = localStorage.getItem("token");
+
+        // Envia a mensagem via WebSocket para atualizar em tempo real
+        socket.emit("sendMessage", newMessage);
+
+        // Faz a requisição para salvar no banco de dados
+        try {
+            const response = await fetch("http://localhost:8080/chat/send", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}` // Se precisar de autenticação
+                },
+                body: JSON.stringify(newMessage)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("Erro ao salvar mensagem:", data.error);
+            }
+        } catch (error) {
+            console.error("Erro ao conectar com a API:", error);
+        }
+
+        // Apenas limpar o campo de mensagem
+        setMessage("");
     }
-  };
+};
+
+
 
   return (
     <section className="containerChat">

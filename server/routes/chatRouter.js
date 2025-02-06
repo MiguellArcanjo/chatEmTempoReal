@@ -1,13 +1,18 @@
 import express from 'express';
-import authMiddleware from '../middlewares/authMiddleware.js';
-import db from '../db.json' with { type: 'json' };
-import { wrtieFile } from '../utils/file.js';
+import authMiddleware from '../middlewares/authMiddleware.js'
+import fs from "node:fs";
+import db from "../db.json" with { type: 'json' };
+import { wrtieFile } from "../utils/file.js"
 
 const chatRouter = express.Router();
 
 chatRouter.get("/messages/:userId/:contactId", (req, res) => {
+    
     const { userId, contactId } = req.params;
-    const db = JSON.parse(fs.readFileSync(dbPath, "utf8"));
+    
+    if (!db.messages) {
+        db.messages = [];
+    }
   
     const conversation = db.messages.filter(
       (msg) =>
@@ -21,6 +26,11 @@ chatRouter.get("/messages/:userId/:contactId", (req, res) => {
 chatRouter.post('/send', authMiddleware, (req, res) => {
     const { receiverId, message } = req.body;
     const senderId = req.user.id;
+    
+
+    if (!receiverId || !message) {
+        return res.status(400).json({ error:"Destinatário e mensagem são obrigatorios!" });;   
+    }
 
     if (!db.messages) {
         db.messages = [];
@@ -38,10 +48,13 @@ chatRouter.post('/send', authMiddleware, (req, res) => {
 
     wrtieFile(db, (err) => {
         if (err) {
-            return res.status(500).json({ error: 'Erro ao salvar mensagem' });
+            console.error("Erro ao salvar mensagem:", err);
+            return res.status(500).json({ error: 'Erro ao salvar dados' });
         }
-        res.json({ message: 'Mensagem enviada com sucesso' });
+
     });
+
+    res.json({ message: "Mensagem enviada com sucesso", newMessage });
 });
 
 export default chatRouter;
