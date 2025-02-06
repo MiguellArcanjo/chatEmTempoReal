@@ -6,7 +6,8 @@
       "email": "miguel@email.com",
       "password": "123",
       "contacts": [
-        2
+        2,
+        6
       ]
     },
     {
@@ -50,7 +51,9 @@
       "name": "ad",
       "email": "admin@gmail.com",
       "password": "123",
-      "contacts": []
+      "contacts": [
+        1
+      ]
     }
   ],
   "messages": [],
@@ -95,7 +98,7 @@
       "id": 7,
       "id_usuario_requisitante": 6,
       "id_usuario_receptor": 1,
-      "status": "pendente"
+      "status": "aceito"
     }
   ]
 }
