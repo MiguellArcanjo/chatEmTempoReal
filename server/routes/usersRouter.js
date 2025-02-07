@@ -122,7 +122,6 @@ usersRouter.post('/sendRequest', authMiddleware, (req, res) => {
     console.log("Usuários:", db.users);
     console.log("Solicitações:", db.requests);
 
-    // Inicializar requests se não existir
     if (!db.requests) {
         db.requests = [];
     }
@@ -209,7 +208,6 @@ usersRouter.get('/requests', authMiddleware, async (req, res) => {
     }
 });
 
-// Aceitar solicitação de amizade
 usersRouter.put('/acceptRequest/:id', authMiddleware, (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
@@ -220,15 +218,12 @@ usersRouter.put('/acceptRequest/:id', authMiddleware, (req, res) => {
         return res.status(404).json({ error: 'Solicitação não encontrada ou já foi resolvida' });
     }
 
-    // Adicionar o contato para os dois usuários
     const user = db.users.find(userDb => userDb.id === userId);
     const contact = db.users.find(userDb => userDb.id === request.id_usuario_requisitante);
 
-    // Adiciona os contatos nas listas apenas se a solicitação for aceita
     user.contacts.push(contact.id);
     contact.contacts.push(user.id);
 
-    // Atualizar status da solicitação
     request.status = 'aceito';
 
     wrtieFile(db, (err) => {
@@ -241,7 +236,6 @@ usersRouter.put('/acceptRequest/:id', authMiddleware, (req, res) => {
     });
 });
 
-// Recusar solicitação de amizade
 usersRouter.put('/rejectRequest/:id', authMiddleware, (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
@@ -252,7 +246,6 @@ usersRouter.put('/rejectRequest/:id', authMiddleware, (req, res) => {
         return res.status(404).json({ error: 'Solicitação não encontrada ou já foi resolvida' });
     }
 
-    // Atualizar status da solicitação
     request.status = 'recusado';
 
     wrtieFile(db, (err) => {
