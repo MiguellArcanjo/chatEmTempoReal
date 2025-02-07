@@ -1,0 +1,65 @@
+.requestsModal {
+    position: absolute;
+    background-color: #7F3FBF;
+    color: #fff;
+    height: 200px;
+    width: 400px;
+    left: 72%;
+    animation: slideUp 0.5s ease-out forwards; 
+    overflow-y: scroll;
+    border-radius: 0 0 10px 10px;
+}
+
+.requestsModal h2 {
+    color: #fff;
+    font-size: 18px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.requestsModal div {
+    padding: 5px;
+    margin-left: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    border-top: 2px solid #fff;
+}
+
+.requestsModal div button {
+    width: 200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.btnSolicitacao {
+    background-color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .3s;
+    color: #7F3FBF;
+    font-weight: 500;
+}
+
+.btnSolicitacao:hover {
+    transform: scale(1.1);
+    transition: .3s;
+}
+
+.requestsModal div {
+    display: flex;
+    margin-top: 13px;
+    gap: 20px;
+}
+
+.paragrafoModal {
+    font-size: 15px;
+    margin-top: 14%;
+    margin-left: 9%;
+}
+
+.requestsModal.show, .PerfilModal.show {
+    transform: translateY(0); 
+    opacity: 1;
+}

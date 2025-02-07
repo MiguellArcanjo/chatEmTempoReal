@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
-import Card from "../../components/card/card";
-import { useNavigate } from "react-router-dom";
+
+import { Nav } from "../../components/Nav/nav";
+import { RequestModal } from "../../components/modal/requestModal/requestModal";
+import { ProfileModal } from "../../components/modal/perfilModal/perfilModal";
+import { useScrollToBottom } from "../../hooks/useScrollToBottom";
+import { ContactList } from "../../components/ContactList/ContactList";
+import { useModalControl } from "../../hooks/useModalControl";
+import { useRequestHandlers } from "../../hooks/useRequestHandlers";
+import { useAuth } from "../../hooks/useAuth";
+import { useFilteredContacts } from "../../hooks/useFilteredContacts";
+import { useContactRequests } from "../../hooks/useContactRequests";
+import { useMessageHandlers } from "../../hooks/useMessageHandlers";
+import { useChat } from "../../hooks/useChat";
+
 import io from "socket.io-client";
 import "./chatPage.css";
-
-interface Request {
-  id: string;
-  senderName: string;
-  status: string;
-}
 
 interface Message {
   senderId: string;
@@ -17,19 +23,43 @@ interface Message {
 }
 
 const ChatPage = () => {
-  const navigate = useNavigate();
+
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [requests, setRequests] = useState<any[]>([]);
-  const [showRequest, setShowRequests] = useState(false);
-  const [showPerfil, setShowPerfil] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [pendingRequestsCount, setPendingRequestsCount] = useState<number>(0);
   const [userName, setUserName] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
   const [socket, setSocket] = useState<any>(null);
+  const [selectedContactName, setSelectedContactName] = useState<string>("");
+  
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  
+  const { 
+    showRequest, 
+    showPerfil, 
+    handleShowwRequests, 
+    handleShowPerfil 
+  } = useModalControl();
+
+  const { 
+    contacts,
+    requests,
+    setRequests,
+    pendingRequestsCount,
+    userNames,
+    messages,
+    setMessages,
+    fetchContacts,
+    fetchMessages, 
+  } = useChat(userId, socket);
+  
+  const { message, setMessage, sendMessage } = useMessageHandlers(socket, userId);
+  const { sendRequest } = useContactRequests();
+  const filteredContacts = useFilteredContacts(contacts, searchTerm);
+  const { handleLogout } = useAuth();
+  const { messagesEndRef } = useScrollToBottom(messages);
+  const { handleAcceptRequest, handleRejectRequest } = useRequestHandlers(setRequests);
 
   useEffect(() => {
     if (!socket) {
@@ -50,7 +80,6 @@ const ChatPage = () => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
-    // Escutar eventos
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("message", handleMessage);
@@ -64,6 +93,20 @@ const ChatPage = () => {
   }, [setMessages]); 
 
   useEffect(() => {
+    if (showRequest) {
+      document.querySelector(".requestsModal")?.classList.add("show");
+    } else {
+      document.querySelector(".requestsModal")?.classList.remove("show");
+    }
+  
+    if (showPerfil) {
+      document.querySelector(".PerfilModal")?.classList.add("show");
+    } else {
+      document.querySelector(".PerfilModal")?.classList.remove("show");
+    }
+  }, [showRequest, showPerfil]);
+
+  useEffect(() => {
     if (!socket) {
       const newSocket = io("http://localhost:8080");
       setSocket(newSocket);
@@ -73,6 +116,10 @@ const ChatPage = () => {
       socket?.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -92,50 +139,6 @@ const ChatPage = () => {
     }
   }, [socket]);
 
-  const fetchContacts = async () => {
-    try {
-      const token = localStorage.getItem("token");
-  
-      const response = await fetch("http://localhost:8080/users/contacts", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || "Erro ao buscar contatos");
-      }
-  
-      const jsonData = await response.json();
-      setContacts(jsonData.contacts);
-  
-      const requestResponse = await fetch("http://localhost:8080/users/requests", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (!requestResponse.ok) {
-        const requestErrorData = await requestResponse.text();
-        throw new Error(requestErrorData || "Erro ao buscar solicitações");
-      }
-  
-      const requestJsonData = await requestResponse.json();
-      setRequests(requestJsonData.requests);
-
-      const pendingRequests = requestJsonData.requests.filter(
-        (request: Request) => request.status === "pendente"
-      );
-      setPendingRequestsCount(pendingRequests.length);
-
-    } catch (error) {
-      console.error("Erro ao buscar dados:", error);
-    }
-  };
-
   useEffect(() => {
     fetchContacts();
   }, []);
@@ -151,274 +154,39 @@ const ChatPage = () => {
     };
   }, [socket]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
-  const fetchMessages = async (contactId: any) => {
-    try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8080/chat/messages/${userId}/${contactId}`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-            throw new Error("Erro ao buscar mensagens");
-        }
-
-        const data = await response.json();
-        setMessages(data);
-
-        // **Entrar na sala correta**
-        socket.emit("join", { userId, contactId });
-    } catch (error) {
-        console.error("Erro ao buscar mensagens:", error);
-    }
-  };
-
-
-  const sendRequest = async (contactId: string) => {
-    console.log("Enviando solicitação para o ID:", contactId); // Debug
-    try {
-      const token = localStorage.getItem("token");
-  
-      const response = await fetch("http://localhost:8080/users/sendRequest", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ contactId }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || "Erro ao enviar solicitação");
-      }
-  
-      alert("Solicitação enviada com sucesso!");
-    } catch (error) {
-      console.error("Erro ao enviar solicitação:", error);
-      alert(error);
-    }
-  };
-
-  const handleShowwRequests = () => {
-    setShowPerfil(false);
-    setShowRequests(!showRequest);
-  };
-
-  const handleShowPerfil = () => {
-    setShowRequests(false);
-    setShowPerfil(!showPerfil);
-  };
-
-  const handleAcceptRequest = async (requestId: string) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(`http://localhost:8080/users/acceptRequest/${requestId}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || "Erro ao aceitar solicitação");
-      }
-
-      setRequests(requests.filter(request => request.id !== requestId));
-      alert("Solicitação aceita com sucesso!");
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro ao aceitar solicitação", error);
-      alert(error);
-    }
-  };
-
-  const handleRejectRequest = async (requestId: string) => {
-    try {
-      const token = localStorage.getItem("token");
-  
-      const response = await fetch(`http://localhost:8080/users/rejectRequest/${requestId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || "Erro ao recusar solicitação");
-      }
-
-      setRequests(requests.filter(request => request.id !== requestId));
-      alert("Solicitação recusada com sucesso!");
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro ao recusar solicitação:", error);
-      alert(error);
-    }
-  };
-
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  useEffect(() => {
-    if (showRequest) {
-      document.querySelector(".requestsModal")?.classList.add("show");
-    } else {
-      document.querySelector(".requestsModal")?.classList.remove("show");
-    }
-  
-    if (showPerfil) {
-      document.querySelector(".PerfilModal")?.classList.add("show");
-    } else {
-      document.querySelector(".PerfilModal")?.classList.remove("show");
-    }
-  }, [showRequest, showPerfil]);
-
-  const sendMessage = async () => {
-    if (socket && message.trim() !== "" && selectedChat) {
-        const newMessage = {
-            senderId: userId,
-            receiverId: selectedChat,
-            message: message,
-        };
-
-        const token = localStorage.getItem("token");
-
-        // Envia a mensagem via WebSocket para atualizar em tempo real
-        socket.emit("sendMessage", newMessage);
-
-        // Faz a requisição para salvar no banco de dados
-        try {
-            const response = await fetch("http://localhost:8080/chat/send", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}` // Se precisar de autenticação
-                },
-                body: JSON.stringify(newMessage)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                console.error("Erro ao salvar mensagem:", data.error);
-            }
-        } catch (error) {
-            console.error("Erro ao conectar com a API:", error);
-        }
-
-        // Apenas limpar o campo de mensagem
-        setMessage("");
-    }
-};
-
-
-
   return (
     <section className="containerChat">
-      <nav className="nav">
-        <div className="inputContainer">
-          <input 
-            type="text" 
-            placeholder="Buscar" 
-            className="buscarPessoa" 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)} 
-          />
-          <img src="/lupa.svg" alt="Ícone de lupa" className="searchIcon" />
-        </div>
-        <div className="navDir">
-          <button 
-            className="btnAddPessoa"
-            onClick={() => {
-              const contactId = prompt("Digite o ID do contato:");
-              if (contactId) {
-                sendRequest(contactId);
-              }
-            }}  
-          >
-            Adicionar Pessoa
-          </button>
-          <img 
-            src="/sino.svg" 
-            alt="Icone do sino"
-            height={40} 
-            width={40} 
-            className="sino" 
-            onClick={handleShowwRequests}
-          />
-          {pendingRequestsCount > 0 && (
-          <span className="notificacao" onClick={handleShowwRequests}>
-              {pendingRequestsCount}
-          </span>
-          )}
 
-          <img 
-            src="/personIcon.svg" 
-            alt="Icone do usuario" 
-            height={50} 
-            width={50} 
-            className="person"
-            onClick={handleShowPerfil}
-          />
-        </div>
-      </nav>
+      <Nav 
+        handleShowPerfil={handleShowPerfil}
+        pendingRequestsCount={pendingRequestsCount}
+        handleShowwRequests={handleShowwRequests}
+        searchTerm={searchTerm}
+        sendRequest={sendRequest}
+        setSearchTerm={setSearchTerm}
+      />  
 
-      {showRequest && (
-        <div className={`requestsModal`}>
-          <h2>Solicitações de amizade</h2>
-          {requests.length > 0 ? (
-            requests.map((request) => (
-              <div key={request.id}>
-                <p>{request.senderName}</p>
-                <button onClick={() => handleAcceptRequest(request.id)} className="btnSolicitacao">Aceitar</button>
-                <button onClick={() => handleRejectRequest(request.id)} className="btnSolicitacao">Rejeitar</button>
-              </div>
-            ))
-          ) : (
-            <p className="paragrafoModal">Não há solicitações pendentes</p>
-          )}
-        </div>
-      )}
+      <RequestModal 
+        show={showRequest}
+        requests={requests}
+        handleAcceptRequest={handleAcceptRequest}
+        handleRejectRequest={handleRejectRequest}
+      />
 
-      {showPerfil && (
-        <div className="PerfilModal">
-          <p className="nameUSer">{userName}</p>
-          <div>
-            <p className="perfil">Perfil</p>
-            <button onClick={handleLogout} className="btnLogout">
-              <img src="/exit.svg" alt="" height={40} width={40}/>
-            </button>
-          </div>
-        </div>
-      )}
+      <ProfileModal 
+        show={showPerfil}
+        userName={userName}
+        userId={userId}
+        handleLogout={handleLogout}
+      />
 
       <main>
-        <div className="divContatos">
-          {filteredContacts?.length > 0 ? (
-            filteredContacts.map((contact) => (
-              <Card 
-                key={contact.id} 
-                name={contact.name} 
-                onClick={() => {
-                  setSelectedChat(contact.id);  
-                  fetchMessages(contact.id);
-                }}
-              />
-            ))
-          ) : (
-            <p>Nenhum contato encontrado</p>
-          )}
-        </div>
+        <ContactList 
+          filteredContacts={filteredContacts}
+          setSelectedChat={setSelectedChat}
+          fetchMessages={fetchMessages}
+          setSelectedContactName={setSelectedContactName}
+        />
 
         <div className={selectedChat ? "divAtivada" :"divConversa"}>
           {selectedChat ? (
@@ -428,20 +196,21 @@ const ChatPage = () => {
                   userId !== msg.senderId ?
                   <div className="messageDir">
                     <div className="nameuserDir">
-                      <strong>{msg.senderId}</strong> 
+                      <strong>{selectedContactName}</strong> 
                     </div>
-                    {msg.message}
+                    <p>{msg.message}</p>
                     <div className="trianguloDir"></div>
                   </div>
                   :
                   <div className="message">
                     <div className="nameuser">
-                      <strong>{msg.senderId}</strong> 
+                      <strong>{userName}</strong>
                     </div>
-                    {msg.message}
+                    <p>{msg.message}</p>
                     <div className="triangulo"></div>
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
               <div className="enviarMensagem">
                 <input 
@@ -453,7 +222,7 @@ const ChatPage = () => {
                 />
                 <button 
                   className="btnEnviar"
-                  onClick={sendMessage}
+                  onClick={() => sendMessage(selectedChat)}
                 >
                   <img src="/arrow.svg" alt="" height={20} width={20}/>
                 </button>

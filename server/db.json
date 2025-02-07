@@ -2,22 +2,21 @@
   "users": [
     {
       "id": 1,
-      "name": "miguel",
+      "name": "Miguel",
       "email": "miguel@email.com",
       "password": "123",
       "contacts": [
         2,
-        6
+        3
       ]
     },
     {
       "id": 2,
-      "name": "ray",
+      "name": "Rayssa",
       "email": "rayssa@email.com",
       "password": "123",
       "contacts": [
-        1,
-        3
+        1
       ]
     },
     {
@@ -26,94 +25,84 @@
       "email": "marcos@email.com",
       "password": "123",
       "contacts": [
-        2,
-        4
+        1
       ]
     },
     {
       "id": 4,
-      "name": "Tester4",
-      "email": "tester4@email.com",
-      "password": "123",
-      "contacts": [
-        3
-      ]
-    },
-    {
-      "id": 5,
-      "name": "tes",
-      "email": "tes@email.com",
+      "name": "teste",
+      "email": "teste@email.com",
       "password": "123",
       "contacts": []
     },
     {
-      "id": 6,
-      "name": "ad",
-      "email": "admin@gmail.com",
+      "id": 5,
+      "name": "teste2",
+      "email": "teste2@email.com",
       "password": "123",
-      "contacts": [
-        1
-      ]
+      "contacts": []
     }
   ],
   "requests": [
     {
       "id": 1,
-      "id_usuario_requisitante": 1,
-      "id_usuario_receptor": 2,
+      "id_usuario_requisitante": 2,
+      "id_usuario_receptor": 1,
       "status": "aceito"
     },
     {
       "id": 2,
-      "id_usuario_requisitante": 2,
-      "id_usuario_receptor": 3,
+      "id_usuario_requisitante": 3,
+      "id_usuario_receptor": 1,
       "status": "aceito"
     },
     {
       "id": 3,
-      "id_usuario_requisitante": 4,
-      "id_usuario_receptor": 3,
-      "status": "aceito"
+      "id_usuario_requisitante": 3,
+      "id_usuario_receptor": 2,
+      "status": "pendente"
     },
     {
       "id": 4,
-      "id_usuario_requisitante": 5,
-      "id_usuario_receptor": 4,
+      "id_usuario_requisitante": 4,
+      "id_usuario_receptor": 1,
       "status": "pendente"
     },
     {
       "id": 5,
-      "id_usuario_requisitante": 6,
-      "id_usuario_receptor": 3,
-      "status": "pendente"
-    },
-    {
-      "id": 6,
-      "id_usuario_requisitante": 6,
-      "id_usuario_receptor": 4,
-      "status": "pendente"
-    },
-    {
-      "id": 7,
-      "id_usuario_requisitante": 6,
+      "id_usuario_requisitante": 5,
       "id_usuario_receptor": 1,
-      "status": "aceito"
+      "status": "recusado"
     }
   ],
   "messages": [
     {
       "id": 1,
-      "senderId": 2,
-      "receiverId": 1,
-      "message": "teas",
-      "timestamp": "2025-02-06T17:11:35.860Z"
+      "senderId": 1,
+      "receiverId": 2,
+      "message": "Teste de mensagem",
+      "timestamp": "2025-02-07T06:58:22.834Z"
     },
     {
       "id": 2,
+      "senderId": 2,
+      "receiverId": 1,
+      "message": "teste de mensagem do segundo lado",
+      "timestamp": "2025-02-07T06:58:34.816Z"
+    },
+    {
+      "id": 3,
       "senderId": 1,
-      "receiverId": 2,
-      "message": "Mandando mensagem para Miguel",
-      "timestamp": "2025-02-06T17:12:10.581Z"
+      "receiverId": 3,
+      "message": "Mensagem para Marcos",
+      "timestamp": "2025-02-07T06:59:15.548Z"
+    },
+    {
+      "id": 4,
+      "senderId": 3,
+      "receiverId": 1,
+      "message": "Mensagem para Miguel",
+      "timestamp": "2025-02-07T06:59:26.148Z"
     }
   ]
 }

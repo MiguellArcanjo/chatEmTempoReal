@@ -6,8 +6,6 @@ import authMiddleware from '../middlewares/authMiddleware.js';
 import { wrtieFile } from "../utils/file.js"
 
 const usersRouter = express.Router();
-const DB_PATH = '../db.json';
-
 
 usersRouter.get('/contacts', authMiddleware, (req, res) => {
     const userId = req.user.id;
@@ -264,6 +262,21 @@ usersRouter.put('/rejectRequest/:id', authMiddleware, (req, res) => {
         }
 
         res.json({ message: 'Solicitação recusada com sucesso' });
+    });
+});
+
+usersRouter.get('/:userId', authMiddleware, (req, res) => {
+    const { userId } = req.params;
+    
+    const user = db.users.find(userDb => userDb.id === Number(userId));
+    
+    if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+    
+    res.json({ 
+        id: user.id,
+        name: user.name 
     });
 });
 

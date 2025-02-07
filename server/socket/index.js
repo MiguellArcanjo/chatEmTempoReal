@@ -10,7 +10,7 @@ io.on('connection', (socket) => {
 
 
     socket.on("join", ({ userId, contactId }) => {
-        const roomName = [userId, contactId].sort().join("-"); // Criar nome único para a sala
+        const roomName = [userId, contactId].sort().join("-");
         users[userId] = socket.id;
         rooms[userId] = roomName;
         socket.join(roomName);
@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
             return;
         }
     
-        const roomName = [senderId, receiverId].sort().join("-"); // Garantir a mesma sala
+        const roomName = [senderId, receiverId].sort().join("-"); 
         console.log(`📤 Enviando mensagem para a sala ${roomName}`);
     
         io.to(roomName).emit("receiveMessage", { senderId, message });
